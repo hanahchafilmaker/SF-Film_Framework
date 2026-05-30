@@ -2,1044 +2,363 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>영화 전복성 평가 양식</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>영화 전복성 평가 양식 — NEAF</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#0F6E56;--g2:#E1F5EE;--g3:#085041;
+  --n:#533AB7;--n2:#EEEDFE;--n3:#3C3489;
+  --c:#993C1D;--c2:#FAECE7;--c3:#712B13;
+  /* fallback values for variables used in the original snippet */
+  --font-sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:"Courier New",Courier,monospace;
+  --color-text-primary:#222;
+  --color-text-secondary:#555;
+  --color-text-tertiary:#777;
+  --color-background-primary:#fff;
+  --color-background-secondary:#f9f9f9;
+  --color-background-tertiary:#eee;
+  --color-border-secondary:#ddd;
+  --color-border-tertiary:#ccc;
+  --color-border-primary:#999;
+  --border-radius-md:6px;
+  --border-radius-lg:8px;
+}
+body{font-family:var(--font-sans);color:var(--color-text-primary);background:transparent;font-size:14px;line-height:1.6}
 
-  :root {
-    --ink: #1a1814;
-    --ink-muted: #6b6760;
-    --ink-faint: #a09d99;
-    --paper: #faf8f4;
-    --paper-warm: #f2efe9;
-    --paper-card: #ffffff;
-    --rule: #e2ded7;
-    --rule-strong: #c9c4bc;
-    --accent: #3d3526;
-    --accent-warm: #7a5c3a;
-    --score-0: #e8e4de;
-    --score-1: #d4c9ba;
-    --score-2: #c0b49a;
-    --score-3: #9e8a6a;
-    --score-4: #7a6245;
-    --score-5: #4a3520;
-    --g-color: #2d4a3e;
-    --g-light: #e8f0ed;
-    --n-color: #3a2d4a;
-    --n-light: #ede8f0;
-    --c-color: #4a2d2d;
-    --c-light: #f0e8e8;
-  }
+/* ---------- 레이아웃 폭 제한 ---------- */
+.wrap{
+  max-width:1200px;          /* 최대 너비 */
+  margin:0 auto;             /* 중앙 정렬 */
+  padding:1rem 0 3rem;
+}
+.page-title{font-size:22px;font-weight:500;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.5rem;line-height:1.5}
 
-  body {
-    font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.7;
-  }
+.formula-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:1.5rem}
+.fbox{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.fbox-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.fbox-eq{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-primary);word-break:break-all}
+.fbox-note{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
 
-  .page-wrap {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 60px 40px 100px;
-  }
+.info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem}
+.field-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.field-input{width:100%;font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 10px;outline:none}
+.field-input:focus{border-color:var(--color-border-primary)}
 
-  /* ── HEADER ── */
-  .header {
-    border-bottom: 1.5px solid var(--ink);
-    padding-bottom: 28px;
-    margin-bottom: 48px;
-  }
-  .header-kicker {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 12px;
-  }
-  .header-title {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 34px;
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    margin-bottom: 8px;
-  }
-  .header-sub {
-    font-size: 14px;
-    color: var(--ink-muted);
-    line-height: 1.6;
-  }
+.section-label{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.section-label::after{content:'';flex:1;height:.5px;background:var(--color-border-tertiary)}
 
-  /* ── INTRO SECTION ── */
-  .intro-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1px;
-    background: var(--rule-strong);
-    border: 1px solid var(--rule-strong);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 48px;
-  }
-  .intro-cell {
-    background: var(--paper-card);
-    padding: 20px 22px;
-  }
-  .intro-cell-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 6px;
-  }
-  .intro-cell-value {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-  }
+.film-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:12px;overflow:hidden}
+.card-head{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--color-background-secondary);border-bottom:.5px solid var(--color-border-tertiary);flex-wrap:nowrap;min-width:0}
+.card-num{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary);flex-shrink:0}
+.title-input{flex:1;min-width:0;font-family:var(--font-sans);font-size:14px;font-weight:500;color:var(--color-text-primary);background:transparent;border:none;outline:none;padding:2px 0}
+.title-input::placeholder{color:var(--color-text-tertiary);font-weight:400}
+.status-chip{font-size:11px;padding:3px 8px;border-radius:999px;background:var(--color-background-tertiary);color:var(--color-text-secondary);white-space:nowrap;flex-shrink:0}
+.status-chip.done{background:var(--g2);color:var(--g3)}
 
-  /* ── FRAMEWORK SECTION ── */
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--rule);
-  }
+.card-body{padding:12px 14px}
 
-  .framework-block {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 48px;
-  }
+.rubric-toggle{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:0;margin-bottom:8px}
+.rubric-toggle:hover{color:var(--color-text-primary)}
+.rtarrow{font-size:9px;transition:transform .15s;display:inline-block}
+.rtarrow.open{transform:rotate(90deg)}
+.rubric-panel{display:none;border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin-bottom:12px}
+.rubric-panel.open{display:block}
+.rubric-tabs{display:flex;border-bottom:.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);overflow-x:auto}
+.rtab{flex:1;min-width:80px;padding:7px 4px;font-size:11px;font-family:var(--font-mono);border:none;background:none;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;border-right:.5px solid var(--color-border-tertiary);white-space:nowrap}
+.rtab:last-child{border-right:none}
+.rtab.active{background:var(--color-background-primary);color:var(--color-text-primary)}
+.rtdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.rtdot.g{background:var(--g)}.rtdot.n{background:var(--n)}.rtdot.c{background:var(--c)}
+.rtab-panel{display:none}
+.rtab-panel.active{display:block}
+.rub-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.rub-table{width:100%;min-width:380px;border-collapse:collapse;font-size:11px}
+.rub-table tr{border-bottom:.5px solid var(--color-border-tertiary)}
+.rub-table tr:last-child{border-bottom:none}
+.rub-table td{padding:6px 10px;vertical-align:top;color:var(--color-text-primary);line-height:1.4}
+.r-sc{font-family:var(--font-mono);color:var(--color-text-tertiary);width:28px;white-space:nowrap}
+.r-st{font-weight:500;width:90px;color:var(--color-text-primary)}
+.r-st small{font-weight:400;color:var(--color-text-secondary);display:block;font-size:10px}
+.r-sub{color:var(--color-text-secondary);font-size:10px}
 
-  .rubric-block {
-    margin-bottom: 20px;
-  }
-  .rubric-axis-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 20px;
-    border-radius: 10px 10px 0 0;
-    border: 1px solid var(--rule-strong);
-    border-bottom: none;
-  }
-  .rubric-axis-head.g { background: var(--g-light); }
-  .rubric-axis-head.n { background: var(--n-light); }
-  .rubric-axis-head.c { background: var(--c-light); }
+/* ---------- 점수 영역 (가로 폭 축소) ---------- */
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:12px;margin-bottom:12px}
+.score-col-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.axis-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:500;color:#fff;flex-shrink:0}
+.axis-dot.g{background:var(--g)}.axis-dot.n{background:var(--n)}.axis-dot.c{background:var(--c)}
+.axis-name{font-size:12px;color:var(--color-text-secondary)}
+.pip-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}
+.pip{
+  height:34px;
+  border-radius:var(--border-radius-md);
+  border:.5px solid var(--color-border-secondary);
+  background:var(--color-background-secondary);
+  font-family:var(--font-mono);
+  font-size:12px;
+  font-weight:500;
+  color:var(--color-text-secondary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all .12s;
+  user-select:none;
+  width:100%;               /* grid 셀 전체 채움 */
+}
+.pip:hover{border-color:var(--color-border-primary);background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.pip.sel-g{background:var(--g);border-color:var(--g);color:#fff}
+.pip.sel-n{background:var(--n);border-color:var(--n);color:#fff}
+.pip.sel-c{background:var(--c);border-color:var(--c);color:#fff}
 
-  .axis-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    color: white;
-    flex-shrink: 0;
-  }
-  .axis-tag.g { background: var(--g-color); }
-  .axis-tag.n { background: var(--n-color); }
-  .axis-tag.c { background: var(--c-color); }
+/* ---------- 결과 영역 ---------- */
+.result-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.res-cell{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.res-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.res-value{font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--color-text-primary);min-height:26px}
 
-  .axis-head-text {}
-  .axis-name { font-size: 14px; font-weight: 600; display: block; }
-  .axis-desc { font-size: 11px; color: var(--ink-muted); }
+/* ---------- 메모 ---------- */
+.memo-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.memo-input{width:100%;font-family:var(--font-sans);font-size:12px;color:var(--color-text-primary);background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;outline:none;resize:none;line-height:1.5;min-height:48px}
+.memo-input:focus{border-color:var(--color-border-secondary)}
 
-  .rubric-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid var(--rule-strong);
-    border-radius: 0 0 10px 10px;
-    overflow: hidden;
-    font-size: 12px;
-    background: var(--paper-card);
-  }
-  .rubric-table th {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    font-weight: 400;
-    padding: 8px 12px;
-    background: var(--paper-warm);
-    border-bottom: 1px solid var(--rule-strong);
-    text-align: left;
-  }
-  .rubric-table td {
-    padding: 7px 12px;
-    border-bottom: 0.5px solid var(--rule);
-    vertical-align: top;
-    line-height: 1.45;
-    color: var(--ink);
-  }
-  .rubric-table tr:last-child td { border-bottom: none; }
-  .rubric-table tr:nth-child(even) td { background: #fdfcfa; }
-  .rt-score {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--ink-muted);
-    white-space: nowrap;
-  }
-  .rt-stage {
-    font-weight: 600;
-    font-size: 11px;
-    white-space: nowrap;
-    color: var(--ink);
-  }
-  .rt-def { font-size: 11px; color: var(--ink); }
-  .rt-sub { font-size: 10px; color: var(--ink-muted); margin-top: 2px; }
+/* ---------- 요약 테이블 (가로 스크롤 가능) ---------- */
+.sum-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sum-table{
+  width:100%;
+  max-width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  border:0.5px solid var(--color-border-secondary);
+  border-radius:var(--border-radius-lg);
+  overflow:hidden;
+  font-size:12px;
+}
+.sum-table th{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--color-text-secondary);
+  background:var(--color-background-secondary);
+  padding:8px 12px;
+  border-bottom:0.5px solid var(--color-border-secondary);
+  text-align:left;
+  font-weight:400;
+  white-space:nowrap;
+}
+.sum-table td{
+  padding:8px 12px;
+  border-bottom:0.5px solid var(--color-border-tertiary);
+  color:var(--color-text-primary);
+}
+.sum-table tr:last-child td{border-bottom:none}
+.sum-table tr:nth-child(even) td{background:var(--color-background-secondary)}
+.mono{font-family:var(--font-mono)}
+.tdblank{color:var(--color-text-tertiary);font-style:italic;font-size:11px}
 
-  /* ── FORMULA ── */
-  .formula-block {
-    background: var(--paper-warm);
-    border: 1px solid var(--rule-strong);
-    border-radius: 10px;
-    padding: 22px 28px;
-    margin-bottom: 48px;
-    display: flex;
-    gap: 40px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .formula-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .formula-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-  .formula-eq {
-    font-family: 'DM Mono', monospace;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .formula-note {
-    font-size: 11px;
-    color: var(--ink-muted);
-  }
-  .formula-divider {
-    width: 1px;
-    height: 40px;
-    background: var(--rule-strong);
-  }
-
-  /* ── RESEARCHER INFO ── */
-  .info-block {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .field-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-  .field-input {
-    font-family: 'Pretendard', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    border: none;
-    border-bottom: 1.5px solid var(--rule-strong);
-    background: transparent;
-    padding: 6px 0;
-    outline: none;
-    width: 100%;
-    transition: border-color 0.2s;
-  }
-  .field-input:focus { border-bottom-color: var(--accent-warm); }
-
-  /* ── FILM EVALUATION CARDS ── */
-  .films-section { margin-bottom: 60px; }
-
-  .film-card {
-    border: 1px solid var(--rule-strong);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 24px;
-    background: var(--paper-card);
-    transition: box-shadow 0.2s;
-    page-break-inside: avoid;
-  }
-  .film-card:hover { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
-
-  .film-card-head {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 24px;
-    background: var(--paper-warm);
-    border-bottom: 1px solid var(--rule);
-  }
-  .film-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-muted);
-    min-width: 24px;
-  }
-  .film-title-input {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
-    border: none;
-    background: transparent;
-    outline: none;
-    flex: 1;
-    padding: 2px 0;
-    border-bottom: 1.5px dashed var(--rule-strong);
-    transition: border-color 0.2s;
-  }
-  .film-title-input:focus { border-bottom-color: var(--accent-warm); }
-  .film-title-input::placeholder { color: var(--ink-faint); font-weight: 400; }
-
-  .film-card-body {
-    padding: 20px 24px;
-  }
-  .score-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  .score-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .score-field-head {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .score-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 22px;
-    color: white;
-    flex-shrink: 0;
-  }
-  .score-badge.g { background: var(--g-color); }
-  .score-badge.n { background: var(--n-color); }
-  .score-badge.c { background: var(--c-color); }
-
-  .score-field-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--ink-muted);
-  }
-
-  .radio-row {
-    display: flex;
-    gap: 6px;
-  }
-  .radio-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-  }
-  .radio-label input[type="radio"] { display: none; }
-  .radio-pip {
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    border: 1.5px solid var(--rule-strong);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--ink-muted);
-    background: var(--paper);
-    transition: all 0.15s;
-  }
-  .radio-label:hover .radio-pip {
-    border-color: var(--accent-warm);
-    background: var(--paper-warm);
-    color: var(--ink);
-  }
-  .radio-label input:checked ~ .radio-pip {
-    color: white;
-    border-color: transparent;
-  }
-  .radio-label.g-radio input:checked ~ .radio-pip { background: var(--g-color); }
-  .radio-label.n-radio input:checked ~ .radio-pip { background: var(--n-color); }
-  .radio-label.c-radio input:checked ~ .radio-pip { background: var(--c-color); }
-
-  .result-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--rule);
-  }
-  .result-cell {
-    background: var(--paper-warm);
-    border-radius: 8px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .result-cell-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-  .result-cell-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--ink);
-    min-height: 28px;
-  }
-
-  .memo-field {
-    margin-top: 14px;
-  }
-  .memo-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 6px;
-  }
-  .memo-input {
-    font-family: 'Pretendard', sans-serif;
-    font-size: 13px;
-    color: var(--ink);
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 8px 12px;
-    width: 100%;
-    outline: none;
-    resize: none;
-    line-height: 1.6;
-    transition: border-color 0.2s;
-    min-height: 54px;
-  }
-  .memo-input:focus { border-color: var(--accent-warm); }
-
-  /* ── SUMMARY TABLE ── */
-  .summary-section { margin-top: 16px; }
-
-  .summary-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid var(--rule-strong);
-    border-radius: 10px;
-    overflow: hidden;
-    font-size: 13px;
-  }
-  .summary-table th {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    background: var(--paper-warm);
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--rule-strong);
-    text-align: left;
-    font-weight: 400;
-  }
-  .summary-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--rule);
-    color: var(--ink);
-    vertical-align: middle;
-  }
-  .summary-table tr:last-child td { border-bottom: none; }
-  .summary-table tr:nth-child(even) td { background: #fdfcfa; }
-  .mono { font-family: 'DM Mono', monospace; }
-  .td-film { font-weight: 500; }
-  .td-blank { color: var(--ink-faint); font-style: italic; font-size: 11px; }
-
-  /* ── EXPORT BUTTONS ── */
-  .action-bar {
-    display: flex;
-    gap: 12px;
-    margin-top: 32px;
-    flex-wrap: wrap;
-  }
-  .btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    padding: 10px 20px;
-    border-radius: 7px;
-    border: 1.5px solid var(--rule-strong);
-    background: var(--paper-card);
-    color: var(--ink);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn:hover { background: var(--paper-warm); border-color: var(--accent-warm); }
-  .btn-primary {
-    background: var(--accent);
-    color: #f5f0e8;
-    border-color: var(--accent);
-  }
-  .btn-primary:hover { background: #2a2318; }
-
-  /* ── INLINE RUBRIC TOGGLE ── */
-  .rubric-toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin-bottom: 14px;
-    transition: color 0.15s;
-  }
-  .rubric-toggle-btn:hover { color: var(--ink); }
-  .rubric-toggle-btn .toggle-arrow {
-    font-size: 9px;
-    transition: transform 0.2s;
-    display: inline-block;
-  }
-  .rubric-toggle-btn.open .toggle-arrow { transform: rotate(90deg); }
-
-  .inline-rubric {
-    display: none;
-    margin-bottom: 18px;
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .inline-rubric.open { display: block; }
-
-  .inline-rubric-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--rule);
-    background: var(--paper-warm);
-  }
-  .irub-tab {
-    flex: 1;
-    padding: 8px 0;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: var(--ink-muted);
-    border-right: 1px solid var(--rule);
-    transition: background 0.15s, color 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-  }
-  .irub-tab:last-child { border-right: none; }
-  .irub-tab.active { background: var(--paper-card); color: var(--ink); }
-  .irub-tab-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .irub-tab-dot.g { background: var(--g-color); }
-  .irub-tab-dot.n { background: var(--n-color); }
-  .irub-tab-dot.c { background: var(--c-color); }
-
-  .irub-panel { display: none; }
-  .irub-panel.active { display: block; }
-
-  .irub-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 11px;
-  }
-  .irub-table tr { border-bottom: 0.5px solid var(--rule); }
-  .irub-table tr:last-child { border-bottom: none; }
-  .irub-table td {
-    padding: 6px 10px;
-    vertical-align: top;
-    line-height: 1.4;
-    color: var(--ink);
-  }
-  .irub-score {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--ink-muted);
-    white-space: nowrap;
-    width: 32px;
-  }
-  .irub-stage {
-    font-weight: 600;
-    white-space: nowrap;
-    width: 100px;
-  }
-  .irub-stage small {
-    font-weight: 400;
-    color: var(--ink-muted);
-    display: block;
-    font-size: 10px;
-  }
-  .irub-def { color: var(--ink); }
-  .irub-sub { color: var(--ink-muted); font-size: 10px; }
-  @media print {
-    .action-bar { display: none; }
-    .film-card { box-shadow: none; }
-    body { background: white; }
-    .page-wrap { padding: 20px; }
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    .framework-block, .score-grid, .result-row, .info-block { grid-template-columns: 1fr; }
-    .intro-grid { grid-template-columns: 1fr; }
-    .formula-block { flex-direction: column; gap: 16px; }
-    .formula-divider { width: 100%; height: 1px; }
-    .page-wrap { padding: 28px 20px 60px; }
-  }
+/* ---------- 액션 바 ---------- */
+.action-bar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{
+  font-family:var(--font-mono);
+  font-size:12px;
+  padding:8px 14px;
+  border-radius:var(--border-radius-md);
+  border:0.5px solid var(--color-border-secondary);
+  background:var(--color-background-primary);
+  color:var(--color-text-primary);
+  cursor:pointer;
+  transition:all .12s;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-primary{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.btn-primary:hover{opacity:.8}
+.btn-danger{color:var(--color-text-danger);border-color:var(--color-border-danger)}
+.btn-danger:hover{background:var(--color-background-danger)}
 </style>
 </head>
 <body>
-<div class="page-wrap">
 
-  <!-- HEADER -->
-  <header class="header">
-    <p class="header-kicker">NEAF · Narrative Evasion Assessment Framework</p>
-    <h1 class="header-title">영화 전복성 평가 양식</h1>
-    <p class="header-sub">G(장르적 필연성) · N(서사적 인과율) · C(인식론적 소외도) 세 축을 0–5점으로 평가하여<br>종합 전복성 지수(S)와 비대칭 지수(AI)를 산출합니다. 각 영화 감상 후 구체적 장면·대사를 근거로 점수를 기입해 주세요.</p>
-  </header>
+<h2 class="sr-only">영화 전복성 평가 양식 — NEAF</h2>
+<div class="wrap">
+  <p class="page-title">영화 전복성 평가 양식</p>
+  <p class="page-sub">
+    본 연구는 평가의 일관성을 확보하기 위해 평가자 간 점수 차이(Δ)를 기준으로 신뢰도를 판단한다. 
+    동일 작품에 대한 평가에서 점수 차이가 1점 이하(Δ ≤ 1)일 경우, 이는 동일한 해석 범주 내에서 발생한 
+    자연스러운 편차로 간주하며 해당 평가는 신뢰 가능한 것으로 본다. 
+    이는 본 연구의 0–5점 척도에서 1점 차이가 최소 단위의 해석 변동 범위에 해당하기 때문이다.
+  </p>
 
-  <!-- QUICK INFO -->
-  <div class="intro-grid">
-    <div class="intro-cell">
-      <p class="intro-cell-label">평가 영화 수</p>
-      <p class="intro-cell-value">7편</p>
-    </div>
-    <div class="intro-cell">
-      <p class="intro-cell-label">점수 범위</p>
-      <p class="intro-cell-value">0 – 5점 (항목당)</p>
-    </div>
-    <div class="intro-cell">
-      <p class="intro-cell-label">평가 기준</p>
-      <p class="intro-cell-value">구체적 장면·대사 근거 필수</p>
-    </div>
+  <div class="formula-bar">
+    <div class="fbox"><div class="fbox-label">종합 전복성 지수</div><div class="fbox-eq">S = 0.4·G + 0.3·N + 0.3·C</div><div class="fbox-note">범위 0.00 – 5.00</div></div>
+    <div class="fbox"><div class="fbox-label">비대칭 지수</div><div class="fbox-eq">AI = G − (N+C) / 2</div><div class="fbox-note">양수=장르 주도 / 음수=서사·인지 주도</div></div>
+    <div class="fbox"><div class="fbox-label">신뢰도 기준</div><div class="fbox-eq">Δ ≤ 1점</div><div class="fbox-note">평가자 간 차이 1점 이내 권장</div></div>
   </div>
 
-  <!-- FORMULA -->
-  <p class="section-label">지수 산출 공식</p>
-  <div class="formula-block">
-    <div class="formula-item">
-      <span class="formula-label">종합 전복성 지수</span>
-      <span class="formula-eq">S = 0.4·G + 0.3·N + 0.3·C</span>
-      <span class="formula-note">범위: 0.00 – 5.00 / 소수점 둘째 자리</span>
-    </div>
-    <div class="formula-divider"></div>
-    <div class="formula-item">
-      <span class="formula-label">비대칭 지수</span>
-      <span class="formula-eq">AI = G − (N + C) / 2</span>
-      <span class="formula-note">양수 = 장르 주도 / 음수 = 서사·인지 주도</span>
-    </div>
-    <div class="formula-divider"></div>
-    <div class="formula-item">
-      <span class="formula-label">신뢰도 기준</span>
-      <span class="formula-eq">Δ ≤ 1점</span>
-      <span class="formula-note">평가자 간 점수 차이 1점 이내 권장</span>
-    </div>
+  <div class="section-label">평가자 정보</div>
+  <div class="info-row">
+    <div><div class="field-label">평가자 이름 / 연구자 ID</div><input class="field-input" type="text" placeholder="홍길동 / R-001" id="researcher-name"></div>
+    <div><div class="field-label">평가 날짜</div><input class="field-input" type="date" id="eval-date"></div>
   </div>
 
-  <!-- RESEARCHER INFO -->
-  <p class="section-label">평가자 정보</p>
-  <div class="info-block" style="margin-bottom: 48px;">
-    <div class="field-group">
-      <label class="field-label">평가자 이름 / 연구자 ID</label>
-      <input class="field-input" type="text" placeholder="홍길동 / R-001" id="researcher-name">
-    </div>
-    <div class="field-group">
-      <label class="field-label">평가 날짜</label>
-      <input class="field-input" type="date" id="eval-date">
-    </div>
-  </div>
+  <div class="section-label">영화별 평가</div>
+  <div id="films-container"></div>
 
-  <!-- FILM CARDS -->
-  <p class="section-label">영화별 평가</p>
-  <div class="films-section" id="films-container"></div>
-
-  <!-- SUMMARY -->
-  <p class="section-label">종합 결과 요약</p>
-  <div class="summary-section">
-    <table class="summary-table" id="summary-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>영화명</th>
-          <th>G</th>
-          <th>N</th>
-          <th>C</th>
-          <th>S (전복성)</th>
-          <th>AI (비대칭)</th>
-        </tr>
-      </thead>
+  <div class="section-label" style="margin-top:1.5rem">종합 결과 요약</div>
+  <div class="sum-wrap">
+    <table class="sum-table">
+      <thead><tr><th>#</th><th>영화명</th><th>G</th><th>N</th><th>C</th><th>S</th><th>AI</th></tr></thead>
       <tbody id="summary-tbody"></tbody>
     </table>
-    <div class="action-bar">
-      <button class="btn btn-primary" onclick="exportCSV()">CSV 내보내기</button>
-      <button class="btn" onclick="window.print()">인쇄 / PDF 저장</button>
-      <button class="btn" onclick="resetAll()">초기화</button>
-    </div>
   </div>
-
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="exportCSV()"><i class="ti ti-download" aria-hidden="true"></i>CSV 내보내기</button>
+    <button class="btn" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i>인쇄 / PDF</button>
+    <button class="btn btn-danger" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true"></i>초기화</button>
+  </div>
 </div>
 
 <script>
-const FILMS = [
-  "승리호", "대홍수", "더 문", "원더랜드", "서복", "정이", "미키 17"
-];
+const FILMS=["승리호","대홍수","더 문","원더랜드","서복","정이","미키 17"];
+const G_ROWS=[["0","패스티쉬","기술 설정 제거해도 서사·동기 100% 유지됨.","소재 대체 가능성 무한"],["1","조건적 동요","기술이 갈등의 배경·단순 제약으로 작용함.","외적 상황으로 대체 가능"],["2","서사적 변용","기술이 인물의 물리적 행동·환경에 제약을 가함.","상황적 제약 수준"],["3","구조적 위기","기술적 설정이 인물의 사회적 지위와 동기를 약화시킴.","존재론적 갈등 발생"],["4","서사적 붕괴","인물의 실존 근거가 기술 설정과 불가분하게 얽힘.","실존의 기반으로서의 기술"],["5","장르적 필연성","기술적 시스템 자체가 인물의 생사와 논리를 결정함.","시스템 붕괴 시 인물 소멸"]];
+const N_ROWS=[["0","미화","주인공의 결핍을 시스템의 보상으로 해결함.","시스템을 '구원자'로 프레임화"],["1","봉합","갈등을 개인의 감정(사랑, 우정)으로 덮음.","구조적 모순을 사적 감정으로 세탁"],["2","치환","시스템 내에서 대안적 관계를 찾아 안주함.","모순을 수정하지 않고 우회"],["3","균열","시스템의 모순을 깨닫고 일부를 수정함.","개인의 희생을 통해 변화를 시도"],["4","폭로","시스템의 본질적 오류를 대중/관객에게 알림.","정보의 격차를 깨고 진실을 직면"],["5","해체","시스템의 근간(논리/기술)을 부정하고 파괴함.","시스템의 논리에 실존으로 대응"]];
+const C_ROWS=[["0","은폐","t0 인물>관객","t1 관객=인물 (동기화)"],["1","투사","t0 관객>인물","t1 관객>인물 (고착)"],["2","회피","t0 인물>관객","t1 관객>인물 (폭로)"],["3","경계","t0 관객>인물","t1 관객≒인물 (의구심 공유)"],["4","전복","t0 관객<인물","t1 관객<인물(따돌림) / 관객=인물(제안 흔들림)"],["5","탈주","t0 관객>인물","t1 인물>관객(역전) / 관객<인물(압도적 진실)"]];
+const AXES=[["G","g","장르·필연성"],["N","n","서사·인과율"],["C","c","인식·소외도"]];
+const ROWS={G:G_ROWS,N:N_ROWS,C:C_ROWS};
 
-const state = {
-  researcher: '',
-  date: '',
-  films: FILMS.map(title => ({ title, G: null, N: null, C: null, memo: '' }))
-};
+const state={films:FILMS.map(t=>({title:t,G:null,N:null,C:null,memo:''}))};
 
-function calcS(g, n, c) {
-  if (g === null || n === null || c === null) return null;
-  return (0.4 * g + 0.3 * n + 0.3 * c).toFixed(2);
-}
-function calcAI(g, n, c) {
-  if (g === null || n === null || c === null) return null;
-  const v = g - (n + c) / 2;
-  return (v >= 0 ? '+' : '') + v.toFixed(2);
+function calcS(g,n,c){if(g===null||n===null||c===null)return null;return(0.4*g+0.3*n+0.3*c).toFixed(2);}
+function calcAI(g,n,c){if(g===null||n===null||c===null)return null;const v=g-(n+c)/2;return(v>=0?'+':'')+v.toFixed(2);}
+function getStatus(f){const d=[f.G,f.N,f.C].filter(v=>v!==null).length;return d===3?'✓ 완료':d+'/3 입력';}
+
+function rubricTable(rows){
+  return `<div class="rub-scroll"><table class="rub-table">${rows.map(r=>`<tr><td class="r-sc">${r[0]}점</td><td class="r-st">${r[1]}</td><td>${r[2]}</td><td class="r-sub">${r[3]}</td></tr>`).join('')}</table></div>`;
 }
 
-function rubricHTML(idx) {
-  return `
-  <button class="rubric-toggle-btn" id="rtbtn-${idx}" onclick="toggleRubric(${idx})">
-    <span class="toggle-arrow">▶</span> 채점 기준표 보기
-  </button>
-  <div class="inline-rubric" id="rubric-${idx}">
-    <div class="inline-rubric-tabs">
-      <button class="irub-tab active" onclick="switchTab(${idx},'G',this)"><span class="irub-tab-dot g"></span>G — 장르적 필연성</button>
-      <button class="irub-tab" onclick="switchTab(${idx},'C',this)"><span class="irub-tab-dot c"></span>C — 인식론적 소외도</button>
-      <button class="irub-tab" onclick="switchTab(${idx},'N',this)"><span class="irub-tab-dot n"></span>N — 서사적 인과율</button>
-    </div>
-    <div class="irub-panel active" id="rpanel-${idx}-G">
-      <table class="irub-table">
-        <tr><td class="irub-score">0점</td><td class="irub-stage">패스티쉬<small>(장식적)</small></td><td class="irub-def">기술 설정을 제거해도 서사와 동기가 100% 유지됨.</td><td class="irub-sub">소재의 대체 가능성 (무한대)</td></tr>
-        <tr><td class="irub-score">1점</td><td class="irub-stage">조건적 동요</td><td class="irub-def">기술이 갈등의 배경이나 단순한 '제약'으로 작용함.</td><td class="irub-sub">외적 상황으로 대체 가능</td></tr>
-        <tr><td class="irub-score">2점</td><td class="irub-stage">서사적 변용</td><td class="irub-def">기술이 인물의 물리적 행동이나 환경에 제약을 가함.</td><td class="irub-sub">상황적 제약 수준</td></tr>
-        <tr><td class="irub-score">3점</td><td class="irub-stage">구조적 위기</td><td class="irub-def">기술적 설정이 인물의 사회적 지위와 동기를 약화시킴.</td><td class="irub-sub">존재론적 갈등 발생</td></tr>
-        <tr><td class="irub-score">4점</td><td class="irub-stage">서사적 붕괴</td><td class="irub-def">인물의 실존 근거가 기술 설정과 불가분하게 얽힘.</td><td class="irub-sub">실존의 기반으로서의 기술</td></tr>
-        <tr><td class="irub-score">5점</td><td class="irub-stage">장르적 필연성</td><td class="irub-def">기술적 시스템 자체가 인물의 생사와 논리를 결정함.</td><td class="irub-sub">시스템 붕괴 시 인물 소멸</td></tr>
-      </table>
-    </div>
-    <div class="irub-panel" id="rpanel-${idx}-C">
-      <table class="irub-table">
-        <tr><td class="irub-score">0점</td><td class="irub-stage">은폐<small>(시스템 순응)</small></td><td class="irub-def">t0 인물&gt;관객</td><td class="irub-sub">t1 관객 = 인물 (동기화)</td></tr>
-        <tr><td class="irub-score">1점</td><td class="irub-stage">투사<small>(거리두기 시작)</small></td><td class="irub-def">t0 관객&gt;인물</td><td class="irub-sub">t1 관객 &gt; 인물 (고착)</td></tr>
-        <tr><td class="irub-score">2점</td><td class="irub-stage">회피<small>(불편한 공범)</small></td><td class="irub-def">t0 인물&gt;관객</td><td class="irub-sub">t1 관객 &gt; 인물 (폭로)</td></tr>
-        <tr><td class="irub-score">3점</td><td class="irub-stage">경계<small>(의구심 발생)</small></td><td class="irub-def">t0 관객&gt;인물</td><td class="irub-sub">t1 관객 ≒ 인물 (의구심 공유)</td></tr>
-        <tr><td class="irub-score">4점</td><td class="irub-stage">전복<small>(인식적 전복)</small></td><td class="irub-def">t0 관객&lt;인물</td><td class="irub-sub">t1 관객&lt;인물 (따돌림) / 관객=인물 (전제 흔들림)</td></tr>
-        <tr><td class="irub-score">5점</td><td class="irub-stage">탈주<small>(완전한 해체)</small></td><td class="irub-def">t0 관객&gt;인물</td><td class="irub-sub">t1 인물&gt;관객 (역전) / 관객&lt;인물 (압도적 진실)</td></tr>
-      </table>
-    </div>
-    <div class="irub-panel" id="rpanel-${idx}-N">
-      <table class="irub-table">
-        <tr><td class="irub-score">0점</td><td class="irub-stage">미화<small>(기만적 치환)</small></td><td class="irub-def">주인공의 결핍을 시스템의 보상으로 해결함.</td><td class="irub-sub">시스템을 '구원자'로 프레임화.</td></tr>
-        <tr><td class="irub-score">1점</td><td class="irub-stage">봉합<small>(도피적 단절)</small></td><td class="irub-def">갈등을 개인의 감정(사랑, 우정)으로 덮음.</td><td class="irub-sub">구조적 모순을 사적 감정으로 세탁.</td></tr>
-        <tr><td class="irub-score">2점</td><td class="irub-stage">치환<small>(구조적 의존)</small></td><td class="irub-def">시스템 내에서 대안적 관계를 찾아 안주함.</td><td class="irub-sub">모순을 수정하지 않고 우회함.</td></tr>
-        <tr><td class="irub-score">3점</td><td class="irub-stage">균열<small>(과도기적 노력)</small></td><td class="irub-def">시스템의 모순을 깨닫고 일부를 수정함.</td><td class="irub-sub">개인의 희생을 통해 변화를 시도.</td></tr>
-        <tr><td class="irub-score">4점</td><td class="irub-stage">폭로<small>(능동적 인과)</small></td><td class="irub-def">시스템의 본질적 오류를 대중/관객에게 알림.</td><td class="irub-sub">정보의 격차를 깨고 진실을 직면함.</td></tr>
-        <tr><td class="irub-score">5점</td><td class="irub-stage">해체<small>(실존적 응답)</small></td><td class="irub-def">시스템의 근간(논리/기술)을 부정하고 파괴함.</td><td class="irub-sub">시스템의 논리에 실존으로 대응함.</td></tr>
-      </table>
-    </div>
-  </div>`;
+/* ---------- 토글 (ID 충돌 해결) ---------- */
+function toggleRubric(idx){
+  const panel=document.getElementById('rubric-panel-'+idx);
+  const arrow=document.getElementById('rubric-arrow-'+idx);
+  const label=document.getElementById('rubric-label-'+idx);
+  const open=panel.classList.toggle('open');
+  arrow.classList.toggle('open',open);
+  label.textContent=open?'채점 기준표 닫기':'채점 기준표 보기';
 }
-
-function toggleRubric(idx) {
-  const btn = document.getElementById('rtbtn-' + idx);
-  const panel = document.getElementById('rubric-' + idx);
-  const open = panel.classList.toggle('open');
-  btn.classList.toggle('open', open);
-  btn.querySelector('.toggle-arrow').textContent = open ? '▼' : '▶';
-  btn.childNodes[1].textContent = open ? ' 채점 기준표 닫기' : ' 채점 기준표 보기';
-}
-
-function switchTab(idx, axis, el) {
-  const rubric = document.getElementById('rubric-' + idx);
-  rubric.querySelectorAll('.irub-tab').forEach(function(t) { t.classList.remove('active'); });
-  rubric.querySelectorAll('.irub-panel').forEach(function(p) { p.classList.remove('active'); });
+function switchTab(idx,axis,el){
+  const panel=document.getElementById('rubric-panel-'+idx);
+  panel.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  panel.querySelectorAll('.rtab-panel').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('rpanel-' + idx + '-' + axis).classList.add('active');
+  document.getElementById('rubric-panel-'+idx+'-'+axis).classList.add('active');
 }
 
-function buildRubric(idx) {
-  var d = document.createElement('div');
-
-  var btn = document.createElement('button');
-  btn.className = 'rubric-toggle-btn';
-  btn.id = 'rtbtn-' + idx;
-  btn.setAttribute('onclick', 'toggleRubric(' + idx + ')');
-  btn.innerHTML = '<span class="toggle-arrow">▶</span> 채점 기준표 보기';
-  d.appendChild(btn);
-
-  var wrap = document.createElement('div');
-  wrap.className = 'inline-rubric';
-  wrap.id = 'rubric-' + idx;
-
-  var tabs = document.createElement('div');
-  tabs.className = 'inline-rubric-tabs';
-  var tabDefs = [
-    ['G', 'g', 'G — 장르적 필연성'],
-    ['C', 'c', 'C — 인식론적 소외도'],
-    ['N', 'n', 'N — 서사적 인과율']
-  ];
-  tabDefs.forEach(function(td, ti) {
-    var tb = document.createElement('button');
-    tb.className = 'irub-tab' + (ti === 0 ? ' active' : '');
-    tb.setAttribute('onclick', 'switchTab(' + idx + ',"' + td[0] + '",this)');
-    tb.innerHTML = '<span class="irub-tab-dot ' + td[1] + '"></span>' + td[2];
-    tabs.appendChild(tb);
-  });
-  wrap.appendChild(tabs);
-
-  var G_ROWS = [
-    ['0점','패스티쉬<small>(장식적)</small>','기술 설정을 제거해도 서사와 동기가 100% 유지됨.','소재의 대체 가능성 (무한대)'],
-    ['1점','조건적 동요','기술이 갈등의 배경이나 단순한 \'제약\'으로 작용함.','외적 상황으로 대체 가능'],
-    ['2점','서사적 변용','기술이 인물의 물리적 행동이나 환경에 제약을 가함.','상황적 제약 수준'],
-    ['3점','구조적 위기','기술적 설정이 인물의 사회적 지위와 동기를 약화시킴.','존재론적 갈등 발생'],
-    ['4점','서사적 붕괴','인물의 실존 근거가 기술 설정과 불가분하게 얽힘.','실존의 기반으로서의 기술'],
-    ['5점','장르적 필연성','기술적 시스템 자체가 인물의 생사와 논리를 결정함.','시스템 붕괴 시 인물 소멸']
-  ];
-  var C_ROWS = [
-    ['0점','은폐<small>(시스템 순응)</small>','t0 인물 &gt; 관객','t1 관객 = 인물 (동기화)'],
-    ['1점','투사<small>(거리두기 시작)</small>','t0 관객 &gt; 인물','t1 관객 &gt; 인물 (고착)'],
-    ['2점','회피<small>(불편한 공범)</small>','t0 인물 &gt; 관객','t1 관객 &gt; 인물 (폭로)'],
-    ['3점','경계<small>(의구심 발생)</small>','t0 관객 &gt; 인물','t1 관객 ≒ 인물 (의구심 공유)'],
-    ['4점','전복<small>(인식적 전복)</small>','t0 관객 &lt; 인물','t1 관객&lt;인물(따돌림) / 관객=인물(전제 흔들림)'],
-    ['5점','탈주<small>(완전한 해체)</small>','t0 관객 &gt; 인물','t1 인물&gt;관객(역전) / 관객&lt;인물(압도적 진실)']
-  ];
-  var N_ROWS = [
-    ['0점','미화<small>(기만적 치환)</small>','주인공의 결핍을 시스템의 보상으로 해결함.','시스템을 \'구원자\'로 프레임화.'],
-    ['1점','봉합<small>(도피적 단절)</small>','갈등을 개인의 감정(사랑, 우정)으로 덮음.','구조적 모순을 사적 감정으로 세탁.'],
-    ['2점','치환<small>(구조적 의존)</small>','시스템 내에서 대안적 관계를 찾아 안주함.','모순을 수정하지 않고 우회함.'],
-    ['3점','균열<small>(과도기적 노력)</small>','시스템의 모순을 깨닫고 일부를 수정함.','개인의 희생을 통해 변화를 시도.'],
-    ['4점','폭로<small>(능동적 인과)</small>','시스템의 본질적 오류를 대중/관객에게 알림.','정보의 격차를 깨고 진실을 직면함.'],
-    ['5점','해체<small>(실존적 응답)</small>','시스템의 근간(논리/기술)을 부정하고 파괴함.','시스템의 논리에 실존으로 대응함.']
-  ];
-
-  [['G', G_ROWS], ['C', C_ROWS], ['N', N_ROWS]].forEach(function(pair, pi) {
-    var axis = pair[0], rows = pair[1];
-    var panel = document.createElement('div');
-    panel.className = 'irub-panel' + (pi === 0 ? ' active' : '');
-    panel.id = 'rpanel-' + idx + '-' + axis;
-    var tbl = document.createElement('table');
-    tbl.className = 'irub-table';
-    rows.forEach(function(r) {
-      var tr = document.createElement('tr');
-      tr.innerHTML = '<td class="irub-score">' + r[0] + '</td>'
-        + '<td class="irub-stage">' + r[1] + '</td>'
-        + '<td class="irub-def">' + r[2] + '</td>'
-        + '<td class="irub-sub">' + r[3] + '</td>';
-      tbl.appendChild(tr);
-    });
-    panel.appendChild(tbl);
-    wrap.appendChild(panel);
-  });
-
-  d.appendChild(wrap);
-  return d;
-}
-
-function renderFilms() {
-  const container = document.getElementById('films-container');
-  container.innerHTML = '';
-  state.films.forEach((film, idx) => {
-    const card = document.createElement('div');
-    card.className = 'film-card';
-    card.id = `film-card-${idx}`;
-
-    const axes = ['G', 'N', 'C'];
-    const axisNames = { G: '장르·필연성', N: '서사·인과율', C: '인식·소외도' };
-
-    card.innerHTML = `
-      <div class="film-card-head">
-        <span class="film-num">0${idx + 1}</span>
-        <input class="film-title-input" type="text" placeholder="영화 제목 입력…" value="${film.title}" oninput="updateTitle(${idx}, this.value)">
-      </div>
-      <div class="film-card-body">
-        ${rubricHTML(idx)}
-        <div class="score-grid">
-          ${axes.map(ax => `
-            <div class="score-field">
-              <div class="score-field-head">
-                <span class="score-badge ${ax.toLowerCase()}">${ax}</span>
-                <span class="score-field-name">${axisNames[ax]}</span>
-              </div>
-              <div class="radio-row">
-                ${[0,1,2,3,4,5].map(v => `
-                  <label class="radio-label ${ax.toLowerCase()}-radio">
-                    <input type="radio" name="film${idx}-${ax}" value="${v}" ${film[ax] === v ? 'checked' : ''} onchange="updateScore(${idx}, '${ax}', ${v})">
-                    <span class="radio-pip">${v}</span>
-                  </label>
-                `).join('')}
-              </div>
-            </div>
-          `).join('')}
+/* ---------- 렌더링 ---------- */
+function renderFilms(){
+  const c=document.getElementById('films-container');
+  c.innerHTML='';
+  state.films.forEach((film,idx)=>{
+    const card=document.createElement('div');
+    card.className='film-card';
+    card.id='fc-'+idx;
+    const pipRows=AXES.map(([ax,cls,name])=>`
+      <div class="score-col">
+        <div class="score-col-head">
+          <span class="axis-dot ${cls}">${ax}</span>
+          <span class="axis-name">${name}</span>
         </div>
+        <div class="pip-row" id="pip-row-${idx}-${ax}">
+          ${[0,1,2,3,4,5].map(v=>`<div class="pip${film[ax]===v?' sel-'+cls:''}" onclick="updScore(${idx},'${ax}','${cls}',${v})">${v}</div>`).join('')}
+        </div>
+      </div>`).join('');
+    const tabBtns=AXES.map(([ax,cls,name],ti)=>`<button class="rtab${ti===0?' active':''}" id="rubric-tab-${idx}-${ax}" onclick="switchTab(${idx},'${ax}',this)"><span class="rtdot ${cls}"></span>${ax} ${name}</button>`).join('');
+    const tabPanels=AXES.map(([ax],ti)=>`<div class="rtab-panel${ti===0?' active':''}" id="rubric-panel-${idx}-${ax}">${rubricTable(ROWS[ax])}</div>`).join('');
+    card.innerHTML=`
+      <div class="card-head">
+        <span class="card-num">0${idx+1}</span>
+        <input class="title-input" type="text" placeholder="영화 제목" value="${film.title}" oninput="updTitle(${idx},this.value)">
+        <span class="status-chip${film.G!==null&&film.N!==null&&film.C!==null?' done':''}" id="status-${idx}">${getStatus(film)}</span>
+      </div>
+      <div class="card-body">
+        <button class="rubric-toggle" onclick="toggleRubric(${idx})">
+          <span class="rubric-arrow" id="rubric-arrow-${idx}">▶</span>
+          <span class="rubric-label" id="rubric-label-${idx}">채점 기준표 닫기</span>
+        </button>
+        <div class="rubric-panel open" id="rubric-panel-${idx}">
+          <div class="rubric-tabs">${tabBtns}</div>
+          ${tabPanels}
+        </div>
+        <div class="score-grid">${pipRows}</div>
         <div class="result-row">
-          <div class="result-cell">
-            <span class="result-cell-label">S — 전복성</span>
-            <span class="result-cell-value" id="s-${idx}">${calcS(film.G, film.N, film.C) ?? '—'}</span>
-          </div>
-          <div class="result-cell">
-            <span class="result-cell-label">AI — 비대칭</span>
-            <span class="result-cell-value" id="ai-${idx}">${calcAI(film.G, film.N, film.C) ?? '—'}</span>
-          </div>
-          <div class="result-cell">
-            <span class="result-cell-label">입력 현황</span>
-            <span class="result-cell-value" id="status-${idx}" style="font-size:13px; padding-top:4px;">${getStatus(film)}</span>
-          </div>
+          <div class="res-cell"><div class="res-label">S — 전복성 지수</div><div class="res-value" id="score-${idx}">${calcS(film.G,film.N,film.C)??'—'}</div></div>
+          <div class="res-cell"><div class="res-label">AI — 비대칭 지수</div><div class="res-value" id="ai-${idx}">${calcAI(film.G,film.N,film.C)??'—'}</div></div>
         </div>
-        <div class="memo-field">
-          <p class="memo-label">근거 메모 (장면·대사)</p>
-          <textarea class="memo-input" placeholder="평가 근거를 간략히 기록하세요…" oninput="updateMemo(${idx}, this.value)">${film.memo}</textarea>
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
+        <div><div class="memo-label">근거 메모</div><textarea class="memo-input" placeholder="평가 근거를 간략히 기록하세요 (장면·대사)…" oninput="updMemo(${idx},this.value)">${film.memo}</textarea></div>
+      </div>`;
+    c.appendChild(card);
   });
   renderSummary();
 }
 
-function getStatus(film) {
-  const filled = [film.G, film.N, film.C].filter(v => v !== null).length;
-  if (filled === 3) return '✓ 완료';
-  return `${filled}/3 입력`;
-}
-
-function updateTitle(idx, val) {
-  state.films[idx].title = val;
+function updTitle(idx,v){state.films[idx].title=v;renderSummary();}
+function updScore(idx,axis,cls,v){
+  state.films[idx][axis]=v;
+  const rowEl=document.getElementById('pip-row-'+idx+'-'+axis);
+  if(rowEl){
+    rowEl.querySelectorAll('.pip').forEach((p,i)=>{p.className='pip'+(i===v?' sel-'+cls:'');});
+  }
+  const f=state.films[idx];
+  document.getElementById('score-'+idx).textContent=calcS(f.G,f.N,f.C)??'—';
+  document.getElementById('ai-'+idx).textContent=calcAI(f.G,f.N,f.C)??'—';
+  const st=document.getElementById('status-'+idx);
+  st.textContent=getStatus(f);
+  st.className='status-chip'+(f.G!==null&&f.N!==null&&f.C!==null?' done':'');
   renderSummary();
 }
-function updateScore(idx, axis, val) {
-  state.films[idx][axis] = val;
-  const film = state.films[idx];
-  document.getElementById(`s-${idx}`).textContent = calcS(film.G, film.N, film.C) ?? '—';
-  document.getElementById(`ai-${idx}`).textContent = calcAI(film.G, film.N, film.C) ?? '—';
-  document.getElementById(`status-${idx}`).textContent = getStatus(film);
-  renderSummary();
-}
-function updateMemo(idx, val) {
-  state.films[idx].memo = val;
-}
+function updMemo(idx,v){state.films[idx].memo=v;}
 
-function renderSummary() {
-  const tbody = document.getElementById('summary-tbody');
-  tbody.innerHTML = '';
-  state.films.forEach((film, idx) => {
-    const s = calcS(film.G, film.N, film.C);
-    const ai = calcAI(film.G, film.N, film.C);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="mono" style="color:var(--ink-muted)">0${idx+1}</td>
-      <td class="${film.title ? 'td-film' : 'td-blank'}">${film.title || '(미입력)'}</td>
-      <td class="mono">${film.G !== null ? film.G : '<span class="td-blank">—</span>'}</td>
-      <td class="mono">${film.N !== null ? film.N : '<span class="td-blank">—</span>'}</td>
-      <td class="mono">${film.C !== null ? film.C : '<span class="td-blank">—</span>'}</td>
-      <td class="mono" style="font-weight:500">${s ?? '<span class="td-blank">—</span>'}</td>
-      <td class="mono">${ai ?? '<span class="td-blank">—</span>'}</td>
-    `;
-    tbody.appendChild(tr);
+function renderSummary(){
+  const tb=document.getElementById('summary-tbody');
+  tb.innerHTML='';
+  state.films.forEach((f,idx)=>{
+    const s=calcS(f.G,f.N,f.C),ai=calcAI(f.G,f.N,f.C);
+    const blank=v=>v!==null?`<span class="mono">${v}</span>`:'<span class="tdblank">—</span>';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="mono" style="color:var(--color-text-tertiary)">0${idx+1}</td>
+      <td style="font-weight:${f.title?'500':'400'}">${f.title||'<span class="tdblank">(미입력)</span>'}</td>
+      <td>${blank(f.G)}</td><td>${blank(f.N)}</td><td>${blank(f.C)}</td>
+      <td>${s?`<span class="mono" style="font-weight:500">${s}</span>`:'<span class="tdblank">—</span>'}</td>
+      <td>${ai?`<span class="mono">${ai}</span>`:'<span class="tdblank">—</span>'}</td>`;
+    tb.appendChild(tr);
   });
 }
 
-function exportCSV() {
-  const name = document.getElementById('researcher-name').value || '미입력';
-  const date = document.getElementById('eval-date').value || '';
-  let csv = '\uFEFF연구자,날짜,영화명,G,N,C,S,AI,메모\n';
-  state.films.forEach(film => {
-    const s = calcS(film.G, film.N, film.C) ?? '';
-    const ai = (film.G !== null && film.N !== null && film.C !== null)
-      ? (film.G - (film.N + film.C) / 2).toFixed(2) : '';
-    const row = [
-      name, date,
-      film.title,
-      film.G ?? '', film.N ?? '', film.C ?? '',
-      s, ai,
-      `"${(film.memo || '').replace(/"/g, '""')}"`
-    ];
-    csv += row.join(',') + '\n';
+function exportCSV(){
+  const name=document.getElementById('researcher-name').value||'미입력';
+  const date=document.getElementById('eval-date').value||'';
+  let csv='\uFEFF연구자,날짜,영화명,G,N,C,S,AI,메모\n';
+  state.films.forEach(f=>{
+    const s=calcS(f.G,f.N,f.C)??'';
+    const ai=(f.G!==null&&f.N!==null&&f.C!==null)?(f.G-(f.N+f.C)/2).toFixed(2):'';
+    csv+=[name,date,f.title,f.G??'',f.N??'',f.C??'',s,ai,`"${(f.memo||'').replace(/"/g,'""')}"`].join(',')+'\n';
   });
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `film_scores_${name}_${date || 'undated'}.csv`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`film_scores_${name}_${date||'undated'}.csv`;
   a.click();
 }
-
-function resetAll() {
-  if (!confirm('모든 입력값을 초기화하겠습니까?')) return;
-  state.films = FILMS.map(title => ({ title, G: null, N: null, C: null, memo: '' }));
-  document.getElementById('researcher-name').value = '';
-  document.getElementById('eval-date').value = '';
+function resetAll(){
+  if(!confirm('모든 입력값을 초기화하겠습니까?'))return;
+  state.films=FILMS.map(t=>({title:t,G:null,N:null,C:null,memo:''}));
+  document.getElementById('researcher-name').value='';
+  document.getElementById('eval-date').value='';
   renderFilms();
 }
 
-document.getElementById('eval-date').valueAsDate = new Date();
+document.getElementById('eval-date').valueAsDate=new Date();
 renderFilms();
 </script>
 </body>
