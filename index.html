@@ -24,6 +24,8 @@
   --border-radius-md:6px;
   --border-radius-lg:8px;
 }
+
+
 body{font-family:var(--font-sans);color:var(--color-text-primary);background:transparent;font-size:14px;line-height:1.6}
 
 /* ---------- 레이아웃 폭 제한 ---------- */
@@ -204,6 +206,9 @@ body{font-family:var(--font-sans);color:var(--color-text-primary);background:tra
     <div><div class="field-label">평가 날짜</div><input class="field-input" type="date" id="eval-date"></div>
   </div>
 
+
+
+
   <div class="section-label">영화별 평가</div>
   <div id="films-container"></div>
 
@@ -229,11 +234,23 @@ const C_ROWS=[["0","은폐","t0 인물>관객","t1 관객=인물 (동기화)"],[
 const AXES=[["G","g","장르·필연성"],["N","n","서사·인과율"],["C","c","인식·소외도"]];
 const ROWS={G:G_ROWS,N:N_ROWS,C:C_ROWS};
 
-const state={films:FILMS.map(t=>({title:t,G:null,N:null,C:null,memo:''}))};
+const state = {
+  films: FILMS.map(t => ({
+    title: t,
+    G: null,
+    N: null,
+    C: null,
+    memo: '',
+    self: { t0: '', t1: '' }   // 👈 추가
+  }))
+};
 
 function calcS(g,n,c){if(g===null||n===null||c===null)return null;return(0.4*g+0.3*n+0.3*c).toFixed(2);}
 function calcAI(g,n,c){if(g===null||n===null||c===null)return null;const v=g-(n+c)/2;return(v>=0?'+':'')+v.toFixed(2);}
 function getStatus(f){const d=[f.G,f.N,f.C].filter(v=>v!==null).length;return d===3?'✓ 완료':d+'/3 입력';}
+function updSelf(idx, value, phase){
+  state.films[idx].self[phase] = value;
+}
 
 function rubricTable(rows){
   return `<div class="rub-scroll"><table class="rub-table">${rows.map(r=>`<tr><td class="r-sc">${r[0]}점</td><td class="r-st">${r[1]}</td><td>${r[2]}</td><td class="r-sub">${r[3]}</td></tr>`).join('')}</table></div>`;
@@ -283,6 +300,25 @@ function renderFilms(){
         <span class="status-chip${film.G!==null&&film.N!==null&&film.C!==null?' done':''}" id="status-${idx}">${getStatus(film)}</span>
       </div>
       <div class="card-body">
+
+<div class="self-block">
+  <div class="memo-label">자기이해 문장 (X/Y)</div>
+
+  <input
+    class="field-input"
+    type="text"
+    placeholder="t0: 나는 [X]이므로 [Y]한다"
+    oninput="updSelf(${idx}, this.value, 't0')"
+    style="margin-bottom:6px;"
+  >
+
+  <input
+    class="field-input"
+    type="text"
+    placeholder="t1: 나는 [X']이므로 [Y']한다"
+    oninput="updSelf(${idx}, this.value, 't1')"
+  >
+</div>
         <button class="rubric-toggle" onclick="toggleRubric(${idx})">
           <span class="rubric-arrow" id="rubric-arrow-${idx}">▶</span>
           <span class="rubric-label" id="rubric-label-${idx}">채점 기준표 닫기</span>
@@ -361,5 +397,6 @@ function resetAll(){
 document.getElementById('eval-date').valueAsDate=new Date();
 renderFilms();
 </script>
+
 </body>
 </html>
