@@ -1,0 +1,332 @@
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:var(--color-text-primary);
+    --muted:var(--color-text-secondary);
+    --faint:var(--color-text-tertiary);
+    --bg:var(--color-background-primary);
+    --bg2:var(--color-background-secondary);
+    --bg3:var(--color-background-tertiary);
+    --border:var(--color-border-tertiary);
+    --border2:var(--color-border-secondary);
+    --r:var(--border-radius-md);
+    --rl:var(--border-radius-lg);
+    --g:#0F6E56;--g2:#E1F5EE;--g3:#085041;
+    --n:#533AB7;--n2:#EEEDFE;--n3:#3C3489;
+    --c:#993C1D;--c2:#FAECE7;--c3:#712B13;
+  }
+  body{font-family:var(--font-sans);color:var(--ink);background:transparent;font-size:14px;line-height:1.6}
+  .wrap{padding:1.5rem 0 3rem}
+
+  .page-title{font-size:22px;font-weight:500;margin-bottom:4px}
+  .page-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.5}
+
+  .formula-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.5rem}
+  .fbox{background:var(--bg2);border-radius:var(--r);padding:12px 14px}
+  .fbox-label{font-size:11px;color:var(--faint);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+  .fbox-eq{font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--ink)}
+  .fbox-note{font-size:11px;color:var(--muted);margin-top:2px}
+
+  .info-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
+  .field-label{font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+  .field-input{width:100%;font-family:var(--font-sans);font-size:13px;color:var(--ink);background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:8px 10px;outline:none}
+  .field-input:focus{border-color:var(--border2)}
+
+  .section-label{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .section-label::after{content:'';flex:1;height:.5px;background:var(--border)}
+
+  .film-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);margin-bottom:12px;overflow:hidden;transition:border-color .15s}
+  .film-card:hover{border-color:var(--border2)}
+
+  .card-head{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg2);border-bottom:.5px solid var(--border)}
+  .card-num{font-family:var(--font-mono);font-size:11px;color:var(--faint);min-width:20px}
+  .title-input{flex:1;font-family:var(--font-sans);font-size:15px;font-weight:500;color:var(--ink);background:transparent;border:none;outline:none;padding:2px 0}
+  .title-input::placeholder{color:var(--faint);font-weight:400}
+  .status-chip{font-size:11px;padding:3px 9px;border-radius:999px;background:var(--bg3);color:var(--muted);white-space:nowrap}
+  .status-chip.done{background:var(--g2);color:var(--g3)}
+
+  .card-body{padding:14px 16px}
+
+  .score-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+  .score-col{}
+  .score-col-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+  .axis-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:500;color:#fff;flex-shrink:0}
+  .axis-dot.g{background:var(--g)}
+  .axis-dot.n{background:var(--n)}
+  .axis-dot.c{background:var(--c)}
+  .axis-name{font-size:12px;color:var(--muted)}
+
+  .pip-row{display:flex;gap:4px}
+  .pip{width:36px;height:34px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg2);font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;user-select:none}
+  .pip:hover{border-color:var(--border2);background:var(--bg3);color:var(--ink)}
+  .pip.sel-g{background:var(--g);border-color:var(--g);color:#fff}
+  .pip.sel-n{background:var(--n);border-color:var(--n);color:#fff}
+  .pip.sel-c{background:var(--c);border-color:var(--c);color:#fff}
+
+  .result-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .res-cell{background:var(--bg2);border-radius:var(--r);padding:10px 12px}
+  .res-label{font-size:11px;color:var(--faint);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+  .res-value{font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--ink);min-height:26px}
+
+  .rubric-toggle{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;margin-bottom:8px}
+  .rubric-toggle:hover{color:var(--ink)}
+  .rtarrow{font-size:9px;transition:transform .15s;display:inline-block}
+  .rtarrow.open{transform:rotate(90deg)}
+
+  .rubric-panel{display:none;border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+  .rubric-panel.open{display:block}
+  .rubric-tabs{display:flex;border-bottom:.5px solid var(--border);background:var(--bg2)}
+  .rtab{flex:1;padding:7px 0;font-size:11px;font-family:var(--font-mono);border:none;background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;border-right:.5px solid var(--border)}
+  .rtab:last-child{border-right:none}
+  .rtab.active{background:var(--bg);color:var(--ink)}
+  .rtdot{width:7px;height:7px;border-radius:50%}
+  .rtdot.g{background:var(--g)}
+  .rtdot.n{background:var(--n)}
+  .rtdot.c{background:var(--c)}
+
+  .rtab-panel{display:none}
+  .rtab-panel.active{display:block}
+  .rub-table{width:100%;border-collapse:collapse;font-size:11px}
+  .rub-table tr{border-bottom:.5px solid var(--border)}
+  .rub-table tr:last-child{border-bottom:none}
+  .rub-table td{padding:6px 10px;vertical-align:top;color:var(--ink);line-height:1.4}
+  .r-sc{font-family:var(--font-mono);color:var(--faint);width:28px;white-space:nowrap}
+  .r-st{font-weight:500;width:110px;color:var(--ink)}
+  .r-st small{font-weight:400;color:var(--muted);display:block;font-size:10px}
+  .r-def{color:var(--ink)}
+  .r-sub{color:var(--muted);font-size:10px}
+
+  .memo-label{font-size:11px;color:var(--faint);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+  .memo-input{width:100%;font-family:var(--font-sans);font-size:12px;color:var(--ink);background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:8px 10px;outline:none;resize:none;line-height:1.5;min-height:48px}
+  .memo-input:focus{border-color:var(--border2)}
+
+  .summary-wrap{margin-top:1rem}
+  .sum-table{width:100%;border-collapse:separate;border-spacing:0;border:.5px solid var(--border);border-radius:var(--rl);overflow:hidden;font-size:12px}
+  .sum-table th{font-family:var(--font-mono);font-size:10px;color:var(--muted);background:var(--bg2);padding:8px 12px;border-bottom:.5px solid var(--border);text-align:left;font-weight:400}
+  .sum-table td{padding:8px 12px;border-bottom:.5px solid var(--border);color:var(--ink)}
+  .sum-table tr:last-child td{border-bottom:none}
+  .sum-table tr:nth-child(even) td{background:var(--bg2)}
+  .mono{font-family:var(--font-mono)}
+  .tdblank{color:var(--faint);font-style:italic;font-size:11px}
+
+  .action-bar{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+  .btn{font-family:var(--font-mono);font-size:12px;padding:8px 16px;border-radius:var(--r);border:.5px solid var(--border2);background:var(--bg);color:var(--ink);cursor:pointer;transition:all .12s}
+  .btn:hover{background:var(--bg2)}
+  .btn-primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .btn-primary:hover{opacity:.85}
+  .btn-danger{color:var(--color-text-danger);border-color:var(--color-border-danger)}
+  .btn-danger:hover{background:var(--color-background-danger)}
+
+  @media(max-width:600px){
+    .score-grid,.info-row,.formula-bar,.result-row{grid-template-columns:1fr}
+  }
+</style>
+
+<h2 class="sr-only">영화 전복성 평가 양식 — NEAF (Narrative Evasion Assessment Framework)</h2>
+<div class="wrap">
+  <p class="page-title">영화 전복성 평가 양식</p>
+  <p class="page-sub">G(장르적 필연성) · N(서사적 인과율) · C(인식론적 소외도) 세 축으로 전복성 지수(S)와 비대칭 지수(AI)를 산출합니다.</p>
+
+  <div class="formula-bar">
+    <div class="fbox">
+      <div class="fbox-label">종합 전복성 지수</div>
+      <div class="fbox-eq">S = 0.4·G + 0.3·N + 0.3·C</div>
+      <div class="fbox-note">범위 0.00 – 5.00</div>
+    </div>
+    <div class="fbox">
+      <div class="fbox-label">비대칭 지수</div>
+      <div class="fbox-eq">AI = G − (N + C) / 2</div>
+      <div class="fbox-note">양수=장르 주도 / 음수=서사·인지 주도</div>
+    </div>
+    <div class="fbox">
+      <div class="fbox-label">신뢰도 기준</div>
+      <div class="fbox-eq">Δ ≤ 1점</div>
+      <div class="fbox-note">평가자 간 차이 1점 이내 권장</div>
+    </div>
+  </div>
+
+  <div class="section-label">평가자 정보</div>
+  <div class="info-row" style="margin-bottom:1.5rem">
+    <div>
+      <div class="field-label">평가자 이름 / 연구자 ID</div>
+      <input class="field-input" type="text" placeholder="홍길동 / R-001" id="researcher-name">
+    </div>
+    <div>
+      <div class="field-label">평가 날짜</div>
+      <input class="field-input" type="date" id="eval-date">
+    </div>
+  </div>
+
+  <div class="section-label">영화별 평가</div>
+  <div id="films-container"></div>
+
+  <div class="section-label" style="margin-top:1.5rem">종합 결과 요약</div>
+  <div class="summary-wrap">
+    <table class="sum-table" id="summary-table">
+      <thead>
+        <tr>
+          <th>#</th><th>영화명</th><th>G</th><th>N</th><th>C</th><th>S</th><th>AI</th>
+        </tr>
+      </thead>
+      <tbody id="summary-tbody"></tbody>
+    </table>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="exportCSV()"><i class="ti ti-download" aria-hidden="true" style="margin-right:5px"></i>CSV 내보내기</button>
+      <button class="btn" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true" style="margin-right:5px"></i>인쇄 / PDF</button>
+      <button class="btn btn-danger" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true" style="margin-right:5px"></i>초기화</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FILMS=["승리호","대홍수","더 문","원더랜드","서복","정이","미키 17"];
+const G_ROWS=[["0","패스티쉬","기술 설정 제거해도 서사와 동기 100% 유지됨.","소재의 대체 가능성 무한"],["1","조건적 동요","기술이 갈등의 배경·단순 제약으로 작용함.","외적 상황으로 대체 가능"],["2","서사적 변용","기술이 인물의 물리적 행동·환경에 제약을 가함.","상황적 제약 수준"],["3","구조적 위기","기술적 설정이 인물의 사회적 지위와 동기를 약화시킴.","존재론적 갈등 발생"],["4","서사적 붕괴","인물의 실존 근거가 기술 설정과 불가분하게 얽힘.","실존의 기반으로서의 기술"],["5","장르적 필연성","기술적 시스템 자체가 인물의 생사와 논리를 결정함.","시스템 붕괴 시 인물 소멸"]];
+const C_ROWS=[["0","은폐","t0 인물>관객","t1 관객=인물 (동기화)"],["1","투사","t0 관객>인물","t1 관객>인물 (고착)"],["2","회피","t0 인물>관객","t1 관객>인물 (폭로)"],["3","경계","t0 관객>인물","t1 관객≒인물 (의구심 공유)"],["4","전복","t0 관객<인물","t1 관객<인물(따돌림) / 관객=인물(전제 흔들림)"],["5","탈주","t0 관객>인물","t1 인물>관객(역전) / 관객<인물(압도적 진실)"]];
+const N_ROWS=[["0","미화","주인공의 결핍을 시스템의 보상으로 해결함.","시스템을 '구원자'로 프레임화"],["1","봉합","갈등을 개인의 감정(사랑, 우정)으로 덮음.","구조적 모순을 사적 감정으로 세탁"],["2","치환","시스템 내에서 대안적 관계를 찾아 안주함.","모순을 수정하지 않고 우회"],["3","균열","시스템의 모순을 깨닫고 일부를 수정함.","개인의 희생을 통해 변화를 시도"],["4","폭로","시스템의 본질적 오류를 대중/관객에게 알림.","정보의 격차를 깨고 진실을 직면"],["5","해체","시스템의 근간(논리/기술)을 부정하고 파괴함.","시스템의 논리에 실존으로 대응"]];
+
+const state={films:FILMS.map(t=>({title:t,G:null,N:null,C:null,memo:''}))};
+
+function calcS(g,n,c){if(g===null||n===null||c===null)return null;return(0.4*g+0.3*n+0.3*c).toFixed(2);}
+function calcAI(g,n,c){if(g===null||n===null||c===null)return null;const v=g-(n+c)/2;return(v>=0?'+':'')+v.toFixed(2);}
+function getStatus(f){const done=[f.G,f.N,f.C].filter(v=>v!==null).length;return done===3?'✓ 완료':done+'/3 입력';}
+
+function buildRubricRows(rows){
+  return rows.map(r=>`<tr><td class="r-sc">${r[0]}점</td><td class="r-st">${r[1]}<small></small></td><td class="r-def">${r[2]}</td><td class="r-sub">${r[3]}</td></tr>`).join('');
+}
+
+function toggleRubric(idx){
+  const p=document.getElementById('rubric-'+idx);
+  const btn=document.getElementById('rtbtn-'+idx);
+  const arr=document.getElementById('rtarr-'+idx);
+  const open=p.classList.toggle('open');
+  arr.classList.toggle('open',open);
+  btn.querySelector('.rtxt').textContent=open?'채점 기준표 닫기':'채점 기준표 보기';
+}
+function switchRubricTab(idx,axis,el){
+  const p=document.getElementById('rubric-'+idx);
+  p.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  p.querySelectorAll('.rtab-panel').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('rp-'+idx+'-'+axis).classList.add('active');
+}
+
+function renderFilms(){
+  const c=document.getElementById('films-container');
+  c.innerHTML='';
+  state.films.forEach((film,idx)=>{
+    const card=document.createElement('div');
+    card.className='film-card';
+    card.id='fc-'+idx;
+    const rubricTable=(rows)=>`<table class="rub-table">${buildRubricRows(rows)}</table>`;
+    card.innerHTML=`
+      <div class="card-head">
+        <span class="card-num">0${idx+1}</span>
+        <input class="title-input" type="text" placeholder="영화 제목" value="${film.title}" oninput="updTitle(${idx},this.value)">
+        <span class="status-chip${film.G!==null&&film.N!==null&&film.C!==null?' done':''}" id="st-${idx}">${getStatus(film)}</span>
+      </div>
+      <div class="card-body">
+        <button class="rubric-toggle" id="rtbtn-${idx}" onclick="toggleRubric(${idx})">
+          <span class="rtarrow" id="rtarr-${idx}">▶</span>
+          <span class="rtxt">채점 기준표 보기</span>
+        </button>
+        <div class="rubric-panel" id="rubric-${idx}">
+          <div class="rubric-tabs">
+            <button class="rtab active" onclick="switchRubricTab(${idx},'G',this)"><span class="rtdot g"></span>G 장르·필연성</button>
+            <button class="rtab" onclick="switchRubricTab(${idx},'N',this)"><span class="rtdot n"></span>N 서사·인과율</button>
+            <button class="rtab" onclick="switchRubricTab(${idx},'C',this)"><span class="rtdot c"></span>C 인식·소외도</button>
+          </div>
+          <div class="rtab-panel active" id="rp-${idx}-G">${rubricTable(G_ROWS)}</div>
+          <div class="rtab-panel" id="rp-${idx}-N">${rubricTable(N_ROWS)}</div>
+          <div class="rtab-panel" id="rp-${idx}-C">${rubricTable(C_ROWS)}</div>
+        </div>
+        <div class="score-grid">
+          ${[['G','g','장르·필연성'],['N','n','서사·인과율'],['C','c','인식·소외도']].map(([ax,cls,name])=>`
+            <div class="score-col">
+              <div class="score-col-head">
+                <span class="axis-dot ${cls}">${ax}</span>
+                <span class="axis-name">${name}</span>
+              </div>
+              <div class="pip-row">
+                ${[0,1,2,3,4,5].map(v=>`<div class="pip${film[ax]===v?' sel-'+cls:''}" onclick="updScore(${idx},'${ax}','${cls}',${v})">${v}</div>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="result-row">
+          <div class="res-cell">
+            <div class="res-label">S — 전복성 지수</div>
+            <div class="res-value" id="sv-${idx}">${calcS(film.G,film.N,film.C)??'—'}</div>
+          </div>
+          <div class="res-cell">
+            <div class="res-label">AI — 비대칭 지수</div>
+            <div class="res-value" id="av-${idx}">${calcAI(film.G,film.N,film.C)??'—'}</div>
+          </div>
+        </div>
+        <div>
+          <div class="memo-label">근거 메모</div>
+          <textarea class="memo-input" placeholder="평가 근거를 간략히 기록하세요 (장면·대사)…" oninput="updMemo(${idx},this.value)">${film.memo}</textarea>
+        </div>
+      </div>
+    `;
+    c.appendChild(card);
+  });
+  renderSummary();
+}
+
+function updTitle(idx,v){state.films[idx].title=v;renderSummary();}
+function updScore(idx,axis,cls,v){
+  state.films[idx][axis]=v;
+  const row=document.querySelector('#fc-'+idx+' .score-col:nth-child('+(axis==='G'?1:axis==='N'?2:3)+') .pip-row');
+  if(row)row.querySelectorAll('.pip').forEach((p,i)=>{p.className='pip'+(i===v?' sel-'+cls:'');});
+  const f=state.films[idx];
+  document.getElementById('sv-'+idx).textContent=calcS(f.G,f.N,f.C)??'—';
+  document.getElementById('av-'+idx).textContent=calcAI(f.G,f.N,f.C)??'—';
+  const st=document.getElementById('st-'+idx);
+  st.textContent=getStatus(f);
+  st.className='status-chip'+(f.G!==null&&f.N!==null&&f.C!==null?' done':'');
+  renderSummary();
+}
+function updMemo(idx,v){state.films[idx].memo=v;}
+
+function renderSummary(){
+  const tb=document.getElementById('summary-tbody');
+  tb.innerHTML='';
+  state.films.forEach((f,idx)=>{
+    const s=calcS(f.G,f.N,f.C),ai=calcAI(f.G,f.N,f.C);
+    const tr=document.createElement('tr');
+    const blank=v=>v!==null?`<span class="mono">${v}</span>`:'<span class="tdblank">—</span>';
+    tr.innerHTML=`<td class="mono" style="color:var(--faint)">0${idx+1}</td>
+      <td style="font-weight:${f.title?'500':'400'}">${f.title||'<span class="tdblank">(미입력)</span>'}</td>
+      <td>${blank(f.G)}</td><td>${blank(f.N)}</td><td>${blank(f.C)}</td>
+      <td>${s?`<span class="mono" style="font-weight:500">${s}</span>`:'<span class="tdblank">—</span>'}</td>
+      <td>${ai?`<span class="mono">${ai}</span>`:'<span class="tdblank">—</span>'}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function exportCSV(){
+  const name=document.getElementById('researcher-name').value||'미입력';
+  const date=document.getElementById('eval-date').value||'';
+  let csv='\uFEFF연구자,날짜,영화명,G,N,C,S,AI,메모\n';
+  state.films.forEach(f=>{
+    const s=calcS(f.G,f.N,f.C)??'';
+    const ai=(f.G!==null&&f.N!==null&&f.C!==null)?(f.G-(f.N+f.C)/2).toFixed(2):'';
+    csv+=[name,date,f.title,f.G??'',f.N??'',f.C??'',s,ai,`"${(f.memo||'').replace(/"/g,'""')}"`].join(',')+'\n';
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`film_scores_${name}_${date||'undated'}.csv`;
+  a.click();
+}
+function resetAll(){
+  if(!confirm('모든 입력값을 초기화하겠습니까?'))return;
+  state.films=FILMS.map(t=>({title:t,G:null,N:null,C:null,memo:''}));
+  document.getElementById('researcher-name').value='';
+  document.getElementById('eval-date').value='';
+  renderFilms();
+}
+
+document.getElementById('eval-date').valueAsDate=new Date();
+renderFilms();
+</script>
